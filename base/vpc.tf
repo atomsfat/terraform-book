@@ -53,7 +53,7 @@ resource "aws_security_group" "nat" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["{var.vpc_cidr}"
+    cidr_blocks = ["${var.vpc_cidr}"]
   }
   egress {
     from_port = -1
@@ -130,8 +130,24 @@ resource "aws_subnet" "us-east-1-private" {
     Name = "Private subnet"
   }
 }
-    
+
+resource "aws_route_table" "us-east-1-private" {
+
+  vpc_id = "${aws_vpc.default.id}"
+
+  route {
+    cidr_block ="0.0.0.0/0"
+    instance_id = "${aws_instance.nat.id}"
+  }
+  
+  tags {
+    Name = "Private subnet"
+  }
+}
 
 resource "aws_route_table_association" "us-east-1-private" {
-
   
+  subnet_id = "${aws_subnet.us-east-1-private.id}"
+  route_table_id = "${aws_route_table.us-east-1-private.id}"
+ 
+}

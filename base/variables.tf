@@ -1,5 +1,7 @@
 variable "access_key" {}
-varibale "secret_key" {}
+variable "secret_key" {}
+variable "aws_key_name" {}
+variable "aws_key_path" {}
 
 variable "region" {
   description = "The AWS region"

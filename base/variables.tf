@@ -3,7 +3,7 @@ variable "secret_key" {}
 variable "aws_key_name" {}
 variable "aws_key_path" {}
 
-variable "region" {
+variable "aws_region" {
   description = "The AWS region"
   default = "us-east-1"
 }

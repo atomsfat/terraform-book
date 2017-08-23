@@ -34,7 +34,7 @@ resource "aws_security_group" "nat" {
   ingress {
     from_port = -1
     to_port =  -1
-    protocol = "tcp"
+    protocol = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
@@ -73,7 +73,7 @@ resource "aws_subnet" "us-east-1-public" {
   vpc_id = "${aws_vpc.default.id}"
   
   cidr_block = "${var.public_subnet_cidr}"
-  availability_zone = "us-east-1"
+  availability_zone = "us-east-1a"
 
   tags {
     Name = "Public subnet"
@@ -82,11 +82,11 @@ resource "aws_subnet" "us-east-1-public" {
   
 
 resource "aws_instance" "nat" {
-  ami = "ami-31962127" # AMI for nat
-  availability_zone = "us-east-1"
+  ami = "ami-293a183f" # AMI for nat
+  availability_zone = "us-east-1a"
   instance_type = "t2.nano"
   key_name = "${var.aws_key_name}"
-  vpc_security_group_ids = ["{aws.security_group.nat.id}"]
+  vpc_security_group_ids = ["${aws_security_group.nat.id}"]
   subnet_id = "${aws_subnet.us-east-1-public.id}"
   associate_public_ip_address = true  
   source_dest_check = false
@@ -97,7 +97,7 @@ resource "aws_instance" "nat" {
 }
 
 resource "aws_eip" "nat" {
-  instance = "${aws_vpc.default.id}"
+  instance = "${aws_instance.nat.id}"
   vpc = true
 }
 
@@ -118,13 +118,18 @@ resource "aws_route_table" "us-east-1-public" {
   }
 }
 
+resource "aws_route_table_association" "us-east-1-public"{
+  subnet_id = "${aws_subnet.us-east-1-public.id}"
+  route_table_id = "${aws_route_table.us-east-1-public.id}"
+}
+
 #private subnet
 
 resource "aws_subnet" "us-east-1-private" {
   vpc_id = "${aws_vpc.default.id}"
   
   cidr_block = "${var.private_subnet_cidr}"
-  availability_zone = "us-east-1"
+  availability_zone = "us-east-1a"
 
   tags {
     Name = "Private subnet"

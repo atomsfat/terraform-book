@@ -28,7 +28,8 @@ variable "private_subnet_cidr" {
 
 variable "intance_ips" {
   description = "IPs for public instances"
-  default = ["10.0.1.20", "10.0.1.21"]
+  /* default = ["10.0.0.20", "10.0.0.21"] */
+  default = ["10.0.0.20"]
 }
 
 variable "environment" {
